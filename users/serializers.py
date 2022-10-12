@@ -2,7 +2,7 @@
 from django.db import models
 from rest_framework import serializers
 from users.models import NewUser
-
+from rest_framework.validators import UniqueValidator
 
 
 
@@ -10,8 +10,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
     """
     Currently unused in preference of the below.
     """
-    email = serializers.EmailField(required=True)
-    user_name = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True, validators=[
+                                   UniqueValidator(queryset=NewUser.objects.all())])
+    user_name = serializers.CharField(required=True, validators=[
+        UniqueValidator(queryset=NewUser.objects.all())])
     phone = serializers.CharField(required=True)
     password = serializers.CharField(min_length=8, write_only=True)
     
@@ -30,9 +32,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return instance
 
 class UpdateUserSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(required=False)
+
     
     class Meta:
         model = NewUser
-        fields = ('first_name', 'last_name', 'image' , 'about' )
+        fields = ('first_name', 'last_name', 'about' )
     

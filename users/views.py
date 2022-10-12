@@ -28,11 +28,13 @@ class CustomUserCreate(APIView):
     permission_classes = [AllowAny]
     def post(self, request, format='json'):
         serializer = CustomUserSerializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
+            
             user = serializer.save()
             if user:
                 json = serializer.data
                 return Response(json, status=status.HTTP_201_CREATED)
+            
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class BlacklistTokenUpdateView(APIView):
